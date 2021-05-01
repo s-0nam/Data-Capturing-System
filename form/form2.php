@@ -192,6 +192,11 @@
     }
 }
 if($_SERVER['REQUEST_METHOD']=='POST'&&isset($_POST['name_of_form'])) { 
+    foreach($_POST as $key => $f){
+        $_POST[$key] = ucwords(str_replace(' ','_',$_POST[$key]));
+       // var_dump($_POST[$key]);
+
+    }
      $_SESSION=$_POST; 
      
 
@@ -205,7 +210,7 @@ if($_SERVER['REQUEST_METHOD']=='POST'&&isset($_POST['name_of_form'])) {
        )";
       $conn->exec($sql);
      $conn = null;
-    // var_dump($_POST);
+    // var_dump($_SESSION);
     create_form($name); 
     create_table();
     session_unset(); 

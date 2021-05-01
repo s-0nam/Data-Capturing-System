@@ -35,10 +35,12 @@ function make_query($array, $name, $row){
 }
 function create_form($name){ 
     $myfile = fopen("$name.php","w");
-    $string =' <?php require "lib/functions.php" ; $namef = $_SERVER["PHP_SELF"]; $namef = ltrim($namef, $namef[0]); $namef = substr($namef,0,-4);;
-    ?> <?php  ?>
+    $string =' <?php require "lib/functions.php" ;
+     $path = $_SERVER["PHP_SELF"];
+     $namef = basename($path, ".php");
+    ?> 
   <h1><?php echo $namef ?></h1>
-   <form action="/<?php echo $namef?>.php" method="POST">   
+   <form action="<?php echo $path?>" method="POST">   
    <?php $conn = get_connection(); $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); ?>
 
   <?php  $res = $conn->query("SELECT * FROM form2 where name = \'$namef\'"); $row = $res->fetch();  ?>
@@ -95,33 +97,35 @@ function create_table(){
     $sql =  "CREATE TABLE $_SESSION[name_of_form] (
         id int(11) AUTO_INCREMENT PRIMARY KEY, ";
         foreach($_SESSION as $fields){
-            if($z==1){
+            if($fields!=$_SESSION["name_of_form"]){
+            if($z==0){ 
                 $sql.="$dt";
-                if($fields==""||$fields=="text"){
-                    $sql.=" VARCHAR(30),";
+                if($fields==""||$fields=="Text"){
+                    $sql.=" VARCHAR(30),"; var_dump($sql);
                 }
-                else if($fields=="number"){
+                else if($fields=="Number"){
                     $sql.=" INT(25),";
                 }
-                else if($fields=="date"){
+                else if($fields=="Date"){
                     $sql.=" DATE,";
                 }
-                $z=0;
+         
             }
-            else if($fields!=$_SESSION['name_of_form']&&$z==0){
+            else if($z==1){
                 if($fields==""){
                     break;
                 }
                 else{
                     $dt="$fields";
                 }
-                $z=1;
+            
             }
-     
+            }
+            $z = 1 - $z;
         }
         $sql = substr($sql,0,-1);
         $sql.=")"; 
-    
+   // var_dump($sql);
     $conn->exec($sql);
     $conn = null;
      
